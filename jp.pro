@@ -11,7 +11,8 @@ SOURCES += src/main.cpp \
 
 OTHER_FILES += \
     js/simpleParser.js \
-    data/kv.txt
+    data/kv.txt \
+    README.md
 
 HEADERS += \
     src/parser.h \
