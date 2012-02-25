@@ -22,7 +22,7 @@ Still early days and everything is likely to change. Implemented in C++ and uses
             break;
 
         // jp.read returns an object we can then add to jp.doc
-        // the result is in the form {"%key":resultString,"%pos",positionInFile}
+        // the result is in the form {"%val":resultString,"%pos",positionInFile}
         row.key = jp.read(/[0-9A-za-z_]+/);
         jp.read(/\s*:\s*/);
         row.value = jp.read(/[^\n]*/);

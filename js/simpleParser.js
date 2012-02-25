@@ -14,7 +14,8 @@ while(!jp.eof()) {
     if(jp.eof())
         break;
 
-    // jp.read returns a value we can then add to jp.doc
+    // jp.read returns an object we can then add to jp.doc
+    // the result is in the form {"%val":resultString,"%pos",positionInFile}
     row.key = jp.read(/[0-9A-za-z_]+/);
     jp.read(/\s*:\s*/);
     row.value = jp.read(/[^\n]*/);
