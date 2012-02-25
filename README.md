@@ -1,7 +1,7 @@
 #jp
 
 Read arbitrary file formats using JS scripts.
-Still early days and everything is likely to change. Implemented in C++ and uses the [V8](http://code.google.com/p/v8/) javascript engine.
+Still early days and everything is likely to change. Implemented in C++ and uses Google's [V8 JavaScript engine](http://code.google.com/p/v8/).
 
 ## Example script file
 
@@ -11,35 +11,35 @@ Still early days and everything is likely to change. Implemented in C++ and uses
     jp.mode = "text";
     // jp.doc is what we'll be filling
     jp.doc.list = [];
-    
+
     // jp.eof() checks to see if we've hit the end of the data file
     while(!jp.eof()) {
         var row = {};
-    
+
         // use jp.read to read a chunk from the file, here using a RegExp
         jp.read(/\s*/);
         if(jp.eof())
             break;
-    
+
         // jp.read returns an object we can then add to jp.doc
         // the result is in the form {"%key":resultString,"%pos",positionInFile}
         row.key = jp.read(/[0-9A-za-z_]+/);
         jp.read(/\s*:\s*/);
         row.value = jp.read(/[^\n]*/);
-    
+
         try {
             // If a RegExp doesn't match, it throws an exception into the javascript
             jp.read(/impossibru!/);
         } catch(e) {
             // We can carry on like nothing happened
         }
-    
+
         jp.doc.list.push(row);
-    
+
         jp.log(row.key["%val"] + " => " + row.value["%val"]);
     }
 
-jp.log(JSON.stringify(jp.doc));
+    jp.log(JSON.stringify(jp.doc));
 
 ## Example data file for above script
 
