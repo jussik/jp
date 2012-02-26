@@ -2,3 +2,5 @@ jp.pro.user
 Makefile
 *.o
 jp
+jpcli/build
+libjp/build

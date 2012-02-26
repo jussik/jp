@@ -1,11 +1,11 @@
-#include "parser.h"
-
-#include <v8.h>
+#include "../include/jp.h"
 #include <iostream>
+#include <v8.h>
 
+using namespace jp;
 using namespace v8;
 
-Parser::Parser(const char *_script, int _scriptLength) : script(_script), scriptLength(_scriptLength) { }
+Parser::Parser(const File *_script) : script(*_script) { }
 
 Handle<Object> Parser::createReadResult(const char *str, int pos) {
     HandleScope scope;
@@ -26,7 +26,7 @@ Handle<Value> Parser::jpEof(const Arguments &args) {
     HandleScope scope;
     ParserData *data = getDataInstance(args.Holder());
 
-    Handle<Boolean> out = Boolean::New(data->isEof());
+    Handle<Boolean> out = Boolean::New(data->IsEof());
 
     return scope.Close(out);
 }
@@ -34,7 +34,7 @@ Handle<Value> Parser::jpEof(const Arguments &args) {
 Handle<Value> Parser::jpLog(const Arguments &args) {
     ParserData *data = getDataInstance(args.Holder());
 
-    std::cout << "Log:" << data->getPos();
+    std::cout << "Log:" << data->GetPos();
     if(args.Length()) {
         String::Utf8Value arg(args[0]);
         std::cout << ":" << *arg;
@@ -48,14 +48,14 @@ Handle<Value> Parser::jpRead(const Arguments &args) {
     HandleScope scope;
     ParserData *data = getDataInstance(args.Holder());
 
-    if(data->isEof()) {
+    if(data->IsEof()) {
         return ThrowException(String::New("Attempted to read past end of file"));
     } if(!args.Length()) {
         // No arguments, just read 1 char
         char str[2];
-        int pos = data->getPos();
-        str[0] = data->getTail()[0];
-        data->seek(1);
+        int pos = data->GetPos();
+        str[0] = *data->GetTail();
+        data->Seek(1);
         str[1] = '\0';
         return scope.Close(createReadResult(str, pos));
     } else if(args[0]->IsRegExp()) {
@@ -67,9 +67,10 @@ Handle<Value> Parser::jpRead(const Arguments &args) {
         Handle<Function> func = Handle<Function>::Cast(funcVal);
 
         // Run regex callback
+        unsigned int pos = data->GetPos();
         Handle<Value> rxList[2];
         rxList[0] = Handle<RegExp>::Cast(args[0]);
-        rxList[1] = String::New(data->getTail());
+        rxList[1] = String::New(data->GetTail());
         Local<Object> result = Local<Object>::Cast(func->CallAsFunction(args.This(), 2, rxList));
 
         // Handle the result
@@ -85,8 +86,7 @@ Handle<Value> Parser::jpRead(const Arguments &args) {
             Local<Array> arr = Local<Array>::Cast(result);
             String::Utf8Value resultStr(arr->Get(0));
 
-            int pos = data->getPos();
-            data->seek(resultStr.length());
+            data->Seek(resultStr.length());
             //std::cout << "READ:" << pos << "-" << data->getPos() << " " << *resultStr << std::endl;
             return scope.Close(createReadResult(*resultStr, pos));
         }
@@ -95,9 +95,9 @@ Handle<Value> Parser::jpRead(const Arguments &args) {
     return ThrowException(String::New("Unsupported argument type for read"));
 }
 
-ParserData Parser::Run(const char *_data, int dataLength) {
+const ParserData Parser::Run(const File *_data) const {
     // Init data
-    ParserData data(_data, dataLength);
+    ParserData data(_data);
 
     // Init scope
     HandleScope scope;
@@ -119,7 +119,7 @@ ParserData Parser::Run(const char *_data, int dataLength) {
     context->Global()->Set(String::New("jp"), jpInstance, ReadOnly);
 
     // Run script
-    Handle<String> source = String::New(script);
+    Handle<String> source = String::New(script.GetData());
     Handle<Script> js = Script::Compile(source);
     js->Run();
 
