@@ -45,7 +45,7 @@ Still early days and everything is likely to change. Implemented in C++ and uses
 
     key1:value1
     key2:value2
-    foo:*&$
+    foo:*%"$
 
 ## Output from the above script and data
 
