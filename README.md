@@ -1,9 +1,10 @@
-#jp
+## jp
 
 Read arbitrary file formats using JS scripts.
-Still early days and everything is likely to change. Implemented in C++ and uses Google's [V8 JavaScript engine](http://code.google.com/p/v8/).
+Still early days and everything is likely to change.
+Implemented in C++ and uses Google's [V8 JavaScript engine](http://code.google.com/p/v8/).
 
-## Example script file
+### Example script file
 
     // jp.log allows us to monitor our progress
     jp.log("Start");
@@ -41,13 +42,13 @@ Still early days and everything is likely to change. Implemented in C++ and uses
 
     jp.log(JSON.stringify(jp.doc));
 
-## Example data file for above script
+### Example data file for above script
 
     key1:value1
     key2:value2
     foo:*%"$
 
-## Output from the above script and data
+### Output from the above script and data
 
     Log:0:Start
     Log:11:key1 => value1
